@@ -9,7 +9,7 @@ import rootSaga from './sagas';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth',]
+  whitelist: ['auth','post']
 };
 
 const sagaMiddleware = createSagaMiddleware();
@@ -31,5 +31,6 @@ const persistor = persistStore(store);
 sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof rootReducer>;
+export type AppDispatch = typeof store.dispatch;
 
 export { store, persistor };

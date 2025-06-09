@@ -1,6 +1,6 @@
 import type { RootState } from '../store';
 
-export const getStatus = (state: RootState) => state?.dashboard?.isLoading;
-export const getAuthSuccessCode = (state: RootState) => state?.dashboard?.successCode;
-export const getAuthErrorCode = (state: RootState) => state?.dashboard?.errorCode;
-export const getIsAuthenticated = (state: RootState) => state?.dashboard?.isAuthenticated;
+export const getAuthLoading = (state: RootState) => state?.auth?.isLoading;
+export const getAuthSuccessCode = (state: RootState) => state?.auth?.successCode;
+export const getAuthErrorCode = (state: RootState) => state?.auth?.errorCode;
+export const getIsAuthenticated = (state: RootState) => state?.auth?.isAuthenticated;

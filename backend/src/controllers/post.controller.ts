@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Post } from '../models/post.model';
 import { CreatePostInput } from '../types/post';
+import { errorResponse, successResponse } from '../utils/response.utils';
 
 export const createPost = async (req: Request, res: Response) => {
   try {
@@ -11,9 +12,9 @@ export const createPost = async (req: Request, res: Response) => {
       author: req.user._id,
     });
 
-    res.status(201).json(post);
+    return successResponse(res, 'Post created successfully', post);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, error.message);
   }
 };
 
@@ -23,9 +24,9 @@ export const getPosts = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 })
       .populate('author', 'email');
 
-    res.json(posts);
+    return successResponse(res, 'Posts fetched successfully', posts);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, error.message);
   }
 };
 
@@ -37,12 +38,12 @@ export const getPost = async (req: Request, res: Response) => {
     }).populate('author', 'email');
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      return errorResponse(res, 'Post not found');
     }
 
-    res.json(post);
+    return successResponse(res, 'Post fetched successfully', post);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, error.message);
   }
 };
 
@@ -59,12 +60,12 @@ export const updatePost = async (req: Request, res: Response) => {
     );
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      return errorResponse(res, 'Post not found');
     }
 
-    res.json(post);
+    return successResponse(res, 'Post updated successfully', post);
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, error.message);
   }
 };
 
@@ -76,11 +77,11 @@ export const deletePost = async (req: Request, res: Response) => {
     });
 
     if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+      return errorResponse(res, 'Post not found');
     }
 
-    res.json({ message: 'Post deleted successfully' });
+    return successResponse(res, 'Post deleted successfully');
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, error.message);
   }
 }; 

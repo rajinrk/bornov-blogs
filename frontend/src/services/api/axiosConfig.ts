@@ -10,6 +10,10 @@ export const createAxiosInstance = async (info: any) => {
 
     return await axiosInstance({ url, method, headers, data, params, timeout: 120000 });
   } catch (error: any) {
+    if (error.response) {
+      return error.response;
+
+    }
 
     return { data: { status_code: 'E-10001' } };
   }

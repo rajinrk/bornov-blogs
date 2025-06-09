@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -18,14 +19,15 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { loginRequest, resetauthStatusCode } from '../services/redux/slices';
+import { Link, useNavigate } from 'react-router-dom';
+import { registerRequest, resetauthStatusCode } from '../services/redux/slices';
 import { getAuthErrorCode, getAuthLoading, getAuthSuccessCode } from '../services/redux/selectors';
 import Loader from './Loader';
 
-interface LoginFormData {
+interface RegisterFormData {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 const validationSchema = Yup.object({
@@ -35,26 +37,30 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .min(6, 'Password must be at least 6 characters')
     .required('Password is required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password')], 'Passwords must match')
+    .required('Confirm password is required'),
 });
 
-export default function Login() {
+export default function Register() {
   const dispatch = useDispatch();
   const errorMsg = useSelector(getAuthErrorCode);
   const successMsg = useSelector(getAuthSuccessCode);
   const isLoading = useSelector(getAuthLoading);
   const [showPassword, setShowPassword] = useState(false);
-
-  const { values, handleChange, handleBlur, handleSubmit, errors, touched, isSubmitting, setSubmitting } = useFormik<LoginFormData>({
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate(); 
+  const { values, handleChange, handleBlur, handleSubmit, errors, touched, isSubmitting,setSubmitting } = useFormik<RegisterFormData>({
     initialValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
     validationSchema: validationSchema,
     validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (values) => {
-      // TODO: Handle login logic here
-      dispatch(loginRequest(values));
+      dispatch(registerRequest(values));
     },
   });
 
@@ -65,22 +71,21 @@ export default function Login() {
     }
     if (successMsg) {
       alert(successMsg);
+      navigate('/login');
     }
     setTimeout(() => dispatch(resetauthStatusCode()), 1000);
   }, [errorMsg, successMsg]);
 
 
   if (isLoading) {
-    return <Loader text="Logging in..." fullScreen />;
+    return <Loader text="Registering..." fullScreen />;
   }
-
-
 
   return (
     <Box className="min-h-screen w-full flex items-center justify-center bg-gray-100 p-4">
       <Paper elevation={3} className="p-8 w-full max-w-md">
         <Typography variant="h4" component="h1" className="text-center mb-6">
-          Login
+          Register
         </Typography>
         <form onSubmit={handleSubmit} className="space-y-4">
           <TextField
@@ -132,6 +137,36 @@ export default function Login() {
               ),
             }}
           />
+          <TextField
+            fullWidth
+            id="confirmPassword"
+            name="confirmPassword"
+            label="Confirm Password"
+            type={showConfirmPassword ? 'text' : 'password'}
+            value={values.confirmPassword}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+            helperText={touched.confirmPassword && errors.confirmPassword}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon className="text-gray-400" />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    edge="end"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
           <Button
             type="submit"
             variant="contained"
@@ -140,13 +175,13 @@ export default function Login() {
             className="mt-6"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Signing In...' : 'Sign In'}
+            {isSubmitting ? 'Registering...' : 'Register'}
           </Button>
           <Box className="text-center mt-4">
             <Typography variant="body2">
-              Don't have an account?{' '}
-              <MuiLink component={Link} to="/register">
-                Register here
+              Already have an account?{' '}
+              <MuiLink component={Link} to="/login">
+                Login here
               </MuiLink>
             </Typography>
           </Box>

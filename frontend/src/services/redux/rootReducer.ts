@@ -2,11 +2,13 @@ import { combineReducers } from 'redux';
 import { createAction } from '@reduxjs/toolkit';
 
 import authSlice from './slices/authSlice';
-
+import postSlice from './slices/postSlice';
+  
 export const logout = createAction('USER_LOGOUT');
 
 const appReducer = combineReducers({
   auth: authSlice,
+  post: postSlice,
 });
 
 const rootReducer = (state: any, action: any) => {

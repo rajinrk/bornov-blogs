@@ -22,7 +22,7 @@ mongoose
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error);
-  });
+  }); 
 
 // Routes
 app.use('/api/auth', authRoutes);

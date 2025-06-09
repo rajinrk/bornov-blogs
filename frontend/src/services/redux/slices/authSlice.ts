@@ -31,8 +31,12 @@ const authSlice: any = createSlice({
     },
 
     loginSuccess(state, action) {
+
+
       state.isLoading = false;
       state.successCode = action.payload.status_code;
+      state.isAuthenticated = true;
+      sessionStorage.setItem('bornov-token', action.payload.data.token);
       state.errorCode = null;
     },
 
@@ -60,6 +64,14 @@ const authSlice: any = createSlice({
       state.successCode = null;
     },
 
+    logout(state) {
+      state.isLoading = true;
+      state.successCode = null;
+      state.errorCode = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem('bornov-token');
+    },
+
 
 
   }
@@ -72,7 +84,7 @@ export const {
   registerRequest,
   registerSuccess,
   registerFailure,
-
+  logout
 } = authSlice.actions;
 
 export default authSlice.reducer;
